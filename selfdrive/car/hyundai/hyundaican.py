@@ -169,6 +169,7 @@ def create_acc_commands_mix_scc(CP, packer, enabled, accel, upper_jerk, idx, hud
     "ACC_ObjDist": hud_control.objDist, # close lead makes controls tighter
     "Navi_SCC_Camera_Act": 2 if CC.activeHda == 2 else 0,
     "Navi_SCC_Camera_Status": 2 if CC.activeHda == 2 else 0,
+    "DriverAlertDisplay": 0,
     }
     commands.append(packer.make_can_msg("SCC11", 0, scc11_values))
   else:
@@ -186,6 +187,7 @@ def create_acc_commands_mix_scc(CP, packer, enabled, accel, upper_jerk, idx, hud
     values["ACC_ObjDist"] = hud_control.objDist
     values["Navi_SCC_Camera_Act"] = 2 if CC.activeHda == 2 else 0
     values["Navi_SCC_Camera_Status"] = 2 if CC.activeHda == 2 else 0
+    values["DriverAlertDisplay"] = 0
     commands.append(packer.make_can_msg("SCC11", 0, values))
 
   # SCC12.ACCMode: Init: 0, Brake: 0, Accel:2, Cruise: 1   KONA_EV에서 측정함.
