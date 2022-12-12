@@ -635,7 +635,9 @@ class Controls:
                    CS.vEgo > self.CP.minSteerSpeed and not CS.standstill and CC.latEnabled
     #CC.longActive = self.active and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
     CC.latOverride = CC.latActive and self.events.any(ET.OVERRIDE_LATERAL)
-    longOverrideFlag = self.events.any(ET.OVERRIDE_LONGITUDINAL) or CS.brakeHoldActive
+    longOverrideFlag = self.events.any(ET.OVERRIDE_LONGITUDINAL) # or CS.brakeHoldActive
+    if CS.brakeHoldActive:
+      self.cruise_helper.longActiveUser = 0
     longActiveUser = self.cruise_helper.longActiveUser
     longActiveEnabled = CC.longEnabled and longActiveUser > 0 #롱컨 레디~
 
