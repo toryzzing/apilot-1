@@ -268,7 +268,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OPKRTimeZone", PERSISTENT},
     { "KeepEngage", PERSISTENT },
     { "UseLanelines", PERSISTENT },
-    { "PathOffset", PERSISTENT },        
+    { "PathOffset", PERSISTENT },
+    { "HapticFeedbackWhenSpeedCamera", PERSISTENT },        
 };
 
 } // namespace
