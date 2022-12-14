@@ -519,6 +519,7 @@ void AnnotatedCameraWidget::drawIcon(QPainter &p, int x, int y, QPixmap &img, QB
   p.drawEllipse(x - radius / 2, y - radius / 2, radius, radius);
   p.setOpacity(opacity);
   //p.drawPixmap(x - img_size / 2, y - img_size / 2, img_size, img_size, img);
+  rotate = 0.0;
   if (rotate < 0.0 || rotate >0.0) {
       QMatrix rm;
       rm.rotate(rotate);
