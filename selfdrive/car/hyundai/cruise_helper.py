@@ -62,6 +62,8 @@ class CruiseHelper:
     self.naviSpeedLimitTarget = 30
     self.dRel = 0
     self.vRel = 0
+    self.dRelValidCount = 0
+    self.dRelValid = 0
     self.trafficState = 0
     self.xState = XState.cruise
 
@@ -92,12 +94,14 @@ class CruiseHelper:
     self.autoResumeFromBrakeCarSpeed = float(int(Params().get("AutoResumeFromBrakeCarSpeed", encoding="utf8")))
     self.autoResumeFromBrakeReleaseTrafficSign  = Params().get_bool("AutoResumeFromBrakeReleaseTrafficSign")
     self.longControlActiveSound = int(Params().get("LongControlActiveSound"))
-    self.accelLimitEcoSpeed = float(int(Params().get("AccelLimitEcoSpeed", encoding="utf8")))
+    #self.accelLimitEcoSpeed = float(int(Params().get("AccelLimitEcoSpeed", encoding="utf8")))
     self.autoSpeedUptoRoadSpeedLimit = float(int(Params().get("AutoSpeedUptoRoadSpeedLimit", encoding="utf8"))) / 100.
-    self.accelLimitConfusedModel = int(Params().get("AccelLimitConfusedModel"))
+    #self.accelLimitConfusedModel = int(Params().get("AccelLimitConfusedModel"))
     self.autoSpeedAdjustWithLeadCar = float(int(Params().get("AutoSpeedAdjustWithLeadCar", encoding="utf8"))) / 1.
     self.cruiseButtonMode = int(Params().get("CruiseButtonMode"))
     self.autoResumeFromGasSpeedMode = int(Params().get("AutoResumeFromGasSpeedMode"))
+    self.myDrivingMode = int(Params().get("InitMyDrivingMode"))
+    self.mySafeModeFactor = float(int(Params().get("MySafeModeFactor", encoding="utf8"))) / 100. if self.myDrivingMode == 2 else 1.0
 
   def update_params(self, frame):
     if frame % 20 == 0:
@@ -129,14 +133,17 @@ class CruiseHelper:
         self.autoResumeFromBrakeReleaseTrafficSign  = Params().get_bool("AutoResumeFromBrakeReleaseTrafficSign")
         self.longControlActiveSound = int(Params().get("LongControlActiveSound"))
       elif self.update_params_count == 8:
-        self.accelLimitEcoSpeed = float(int(Params().get("AccelLimitEcoSpeed", encoding="utf8")))
+        #self.accelLimitEcoSpeed = float(int(Params().get("AccelLimitEcoSpeed", encoding="utf8")))
         self.autoSpeedUptoRoadSpeedLimit = float(int(Params().get("AutoSpeedUptoRoadSpeedLimit", encoding="utf8"))) / 100.
       elif self.update_params_count == 9:
-        self.accelLimitConfusedModel = int(Params().get("AccelLimitConfusedModel"))
+        #self.accelLimitConfusedModel = int(Params().get("AccelLimitConfusedModel"))
         self.autoSpeedAdjustWithLeadCar = float(int(Params().get("AutoSpeedAdjustWithLeadCar", encoding="utf8"))) / 1.
       elif self.update_params_count == 10:
         self.cruiseButtonMode = int(Params().get("CruiseButtonMode"))
         self.autoResumeFromGasSpeedMode = int(Params().get("AutoResumeFromGasSpeedMode"))
+      elif self.update_params_count == 11:
+        #self.myDrivingMode = int(Params().get("InitMyDrivingMode")) #초기에 한번만 읽어옴...
+        self.mySafeModeFactor = float(int(Params().get("MySafeModeFactor", encoding="utf8"))) / 100. if self.myDrivingMode == 2 else 1.0
 
   @staticmethod
   def get_lead(sm):
@@ -258,11 +265,11 @@ class CruiseHelper:
             button_type = ButtonType.decelCruise
           elif not LongPressed and b.type == ButtonType.gapAdjustCruise:
             self.longCruiseGap = 1 if self.longCruiseGap == 4 else self.longCruiseGap + 1
-            Params().put("PrevCruiseGap", str(self.longCruiseGap))
+            #Params().put("PrevCruiseGap", str(self.longCruiseGap))
 
           LongPressed = False
           ButtonCnt = 0
-      if ButtonCnt == 50:
+      if ButtonCnt == 30:
         LongPressed = True
         V_CRUISE_DELTA = V_CRUISE_DELTA_KM if metric else V_CRUISE_DELTA_MI
         if ButtonPrev == ButtonType.accelCruise:
@@ -344,9 +351,18 @@ class CruiseHelper:
     resume_cond = abs(CS.steeringAngleDeg) < 20 # and not CS.steeringPressed
     leadCarSpeed = v_ego_kph + vRel*CV.MS_TO_KPH
 
-    if dRel==0 and 5 < self.dRel < 20.0: ## 레이더가 갑자기 사라지면...
-      #self.radarAlarmCount = 500
-      pass
+    if dRel==0 and self.dRelValidCount > 0:
+      self.dRelValidCount -= 1
+      if self.dRelValidCount == 0:
+        if 2 < self.dRelValid < 20 and abs(CS.steeringAngleDeg)>15: #이전레이더가 20이하이면... 핸들을 15도이상꺾었을때...
+          self.radarAlarmCount = 2000
+          v_cruise_kph = min(v_ego_kph_set, v_cruise_kph) # 레이더가 갑자기 사라지는 경우 현재속도로 세트함.
+        self.dRelValid = 0
+    elif dRel > 0 and self.dRelValidCount < 10:
+      self.dRelValidCount += 1
+      if self.dRelValidCount > 5:
+        self.dRelValid = dRel
+
     if self.longActiveUser>0:
       if xState != self.xState and xState == XState.softHold:
         controls.events.add(EventName.autoHold)
@@ -369,9 +385,9 @@ class CruiseHelper:
           v_cruise_kph = buttonSpeed
           self.v_cruise_kph_backup = v_cruise_kph #버튼으로할땐 백업
         elif button == ButtonType.gapAdjustCruise:  ##안먹네.... 나중에 보자~
-          myDrivingMode = int(Params().get("MyDrivingMode"))
-          myDrivingMode = myDrivingMode + 1 if myDrivingMode < 4 else 1
-          Params().put("MyDrivingMode", str(myDrivingMode))
+          #myDrivingMode = int(Params().get("MyDrivingMode"))
+          self.myDrivingMode = self.myDrivingMode + 1 if self.myDrivingMode < 4 else 1
+          #Params().put("MyDrivingMode", str(myDrivingMode))
       else:
         self.cruiseButtons = button
         if button == ButtonType.accelCruise:   

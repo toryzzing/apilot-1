@@ -429,6 +429,7 @@ class LongitudinalMpc:
 
     self.trafficState = 0
     self.debugLongText1 = ""
+    mySafeModeFactor = clip(controls.mySafeModeFactor, 0.5, 1.0)
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
@@ -445,7 +446,7 @@ class LongitudinalMpc:
       self.applyCruiseGap = controls.longCruiseGap
       cruiseGapRatio = interp(controls.longCruiseGap, [1,2,3], [1.1, 1.2, 1.45])
 
-    self.t_follow = max(0.9, cruiseGapRatio * self.tFollowRatio * (2.0 - carstate.mySafeModeFactor)) # 0.9아래는 위험하니 적용안함.
+    self.t_follow = max(0.9, cruiseGapRatio * self.tFollowRatio * (2.0 - mySafeModeFactor)) # 0.9아래는 위험하니 적용안함.
 
 
     # lead값을 고의로 줄여주면, 빨리 감속, lead값을 늘려주면 빨리가속,
@@ -459,7 +460,7 @@ class LongitudinalMpc:
     self.comfort_brake = COMFORT_BRAKE
     self.set_weights(prev_accel_constraint=prev_accel_constraint, v_lead0=lead_xv_0[0,1], v_lead1=lead_xv_1[0,1])
 
-    applyStopDistance = self.stopDistance * (2.0 - carstate.mySafeModeFactor)
+    applyStopDistance = self.stopDistance * (2.0 - mySafeModeFactor)
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
@@ -482,7 +483,7 @@ class LongitudinalMpc:
       if v_ego_kph > 50.0 or self.xState in [XState.lead, XState.cruise] or (v_ego_kph > 30.0 and (model_x > 40.0 and abs(y[-1])<3.0)):
         self.e2ePaused = False
 
-      if carstate.myDrivingMode <= 3: #cruiseGap이 1,2,3일때 신호감속.. 4일때는 일반주행.
+      if controls.myDrivingMode <= 3: #cruiseGap이 1,2,3일때 신호감속.. 4일때는 일반주행.
 
         #1단계: 모델값을 이용한 신호감지
         startSign = v[-1] > 5.0 or v[-1] > (v[0]+2)
@@ -577,7 +578,7 @@ class LongitudinalMpc:
         if False: #self.trafficStopModelSpeed:
           v_cruise = v[0]
 
-      self.comfort_brake *= carstate.mySafeModeFactor
+      self.comfort_brake *= mySafeModeFactor
       self.longActiveUser = controls.longActiveUser
       self.cruiseButtonCounter = controls.cruiseButtonCounter
       x2 = model_x * np.ones(N+1) + self.trafficStopDistanceAdjust

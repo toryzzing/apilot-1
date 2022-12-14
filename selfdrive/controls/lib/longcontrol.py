@@ -71,7 +71,6 @@ class LongControl:
     self.readParamCount = 0
     self.longitudinalTuningKf = 1.0
     self.longitudinalTuningKpV = 1.0
-    self.accelBoost = 1.0
     self.startAccelApply = 0.0
     self.stopAccelApply = 0.0
 
@@ -92,7 +91,7 @@ class LongControl:
       self.CP.longitudinalTuning.kiV = [self.longitudinalTuningKiV]
       self.pid._k_p = (self.CP.longitudinalTuning.kpBP, self.CP.longitudinalTuning.kpV)
     elif self.readParamCount == 30:
-      self.accelBoost = float(int(Params().get("AccelBoost", encoding="utf8"))) / 100.
+      pass
     elif self.readParamCount == 40:
       self.startAccelApply = float(int(Params().get("StartAccelApply", encoding="utf8"))) * 0.01
       self.stopAccelApply = float(int(Params().get("StopAccelApply", encoding="utf8"))) * 0.01
@@ -125,7 +124,7 @@ class LongControl:
       a_target = 0.0
 
     self.pid.neg_limit = accel_limits[0]
-    self.pid.pos_limit = accel_limits[1] * self.accelBoost * CS.mySafeModeFactor
+    self.pid.pos_limit = accel_limits[1]
 
     self.CP.startingState = True if self.startAccelApply > 0.0 else False
     self.CP.startAccel = 2.0 * self.startAccelApply
@@ -169,7 +168,7 @@ class LongControl:
                                      feedforward=a_target,
                                      freeze_integrator=freeze_integrator)
 
-    self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1] * self.accelBoost * CS.mySafeModeFactor)
+    self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
 
     self.debugLoCText = "T:{:.2f} V:{:.2f}={:.1f}-{:.1f} Aout:{:.2f}<{:.2f}".format(t_since_plan, (self.v_pid - CS.vEgo)*3.6, self.v_pid*3.6, CS.vEgo*3.3, self.last_output_accel, output_accel)
 

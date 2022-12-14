@@ -136,9 +136,8 @@ void OnroadWindow::mouseReleaseEvent(QMouseEvent* e) {
   QRect opRect(rect().right() - 300, 0, 300, 300);
   const SubMaster& sm = *(uiState()->sm);
   if (gapRect.contains(e->x(), e->y())) {
-      
-      auto car_state = sm["carState"].getCarState();
-      int myDrivingMode = car_state.getMyDrivingMode();
+      const auto cs = sm["controlsState"].getControlsState();
+      int myDrivingMode = cs.getMyDrivingMode();
       myDrivingMode++;
       if (myDrivingMode > 4) myDrivingMode = 1;
       QString values = QString::number(myDrivingMode);
@@ -695,7 +694,7 @@ void AnnotatedCameraWidget::drawBottomIcons(QPainter &p) {
 
   // cruise gap
   int gap = controls_state.getLongCruiseGap(); // car_state.getCruiseGap();
-  int myDrivingMode = car_state.getMyDrivingMode();
+  int myDrivingMode = controls_state.getMyDrivingMode();
   //bool longControl = 0;// scc_smoother.getLongControl();
   //int autoTrGap = 0;// scc_smoother.getAutoTrGap();
 

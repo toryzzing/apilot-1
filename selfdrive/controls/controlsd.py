@@ -204,6 +204,7 @@ class Controls:
     self.powerOnTimer = 0
     self.right_lane_visible = False
     self.left_lane_visible = False
+
     # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
 
@@ -671,8 +672,7 @@ class Controls:
 
     if not self.joystick_mode:
       # accel PID loop
-      ecoSpeed = self.cruise_helper.accelLimitEcoSpeed or (self.cruise_helper.position_x < 20.0 and self.cruise_helper.accelLimitConfusedModel)
-      pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, CS.vEgo, self.v_cruise_helper.v_cruise_kph * CV.KPH_TO_MS, CS.myDrivingMode <= 2, ecoSpeed) # cruiseGap이 1,2는 연비운전모드
+      pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, CS.vEgo, self.v_cruise_helper.v_cruise_kph * CV.KPH_TO_MS)
       t_since_plan = (self.sm.frame - self.sm.rcv_frame['longitudinalPlan']) * DT_CTRL
       actuators.accel = self.LoC.update(CC.longActive, CS, long_plan, pid_accel_limits, t_since_plan, CC)
       #self.debugText2 = 'Accel=[{:1.2f}]: {:1.2f},{:1.2f}'.format(actuators.accel, pid_accel_limits[0], pid_accel_limits[1])
@@ -886,6 +886,8 @@ class Controls:
     controlsState.longActiveUser = self.cruise_helper.longActiveUser
     controlsState.cruiseButtonCounter = self.cruiseButtonCounter
     controlsState.longCruiseGap = self.cruise_helper.longCruiseGap if self.CP.openpilotLongitudinalControl else CS.cruiseGap
+    controlsState.myDrivingMode = self.cruise_helper.myDrivingMode
+    controlsState.mySafeModeFactor = self.cruise_helper.mySafeModeFactor
 
     controlsState.upAccelCmd = float(self.LoC.pid.p)
     controlsState.uiAccelCmd = float(self.LoC.pid.i)
@@ -979,9 +981,14 @@ class Controls:
 
   def controlsd_thread(self):
     while True:
+      initialized_prev = self.initialized
       self.step()
       self.rk.monitor_time()
       self.prof.display()
+
+      # ajouatom: CI.init()할때  lag가 disable_ecu(), enable_radar_tracks()로 인해 발생함... 초기화가 필요함. 
+      if self.initialized and not initialized_prev:
+        self.rk.reset_time()
 
 
 def main(sm=None, pm=None, logcan=None):
