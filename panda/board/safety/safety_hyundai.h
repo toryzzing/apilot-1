@@ -348,6 +348,7 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
       if (mainModeACC == 1) {
           controls_allowed = 1;
           hyundai_auto_engage = 0;
+          LKAS11_forwarding = true;
       }
   }
 

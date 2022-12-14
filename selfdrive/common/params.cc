@@ -244,6 +244,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     { "PrevCruiseGap", PERSISTENT },
     { "InitMyDrivingMode", PERSISTENT },
     { "MyDrivingMode", PERSISTENT },
+    { "MySafeModeFactor", PERSISTENT },
     { "AutoSyncCruiseSpeed", PERSISTENT },
     { "LongitudinalActuatorDelayLowerBound", PERSISTENT },
     { "LongitudinalActuatorDelayUpperBound", PERSISTENT },

@@ -622,6 +622,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   longActiveUser @67: Int32;
   vCruiseOut @68: Float32;
   cruiseButtonCounter @69: Int32;
+  longCruiseGap @70: Int8;
 
   enum OpenpilotState @0xdbe58b96d2d1ac61 {
     disabled @0;
