@@ -48,6 +48,7 @@ ThermalStatus = log.DeviceState.ThermalStatus
 State = log.ControlsState.OpenpilotState
 PandaType = log.PandaState.PandaType
 Desire = log.LateralPlan.Desire
+XState = log.LongitudinalPlan.XState
 LaneChangeState = log.LateralPlan.LaneChangeState
 LaneChangeDirection = log.LateralPlan.LaneChangeDirection
 EventName = car.CarEvent.EventName
@@ -652,7 +653,7 @@ class Controls:
 
     hudControl = CC.hudControl
     xState = self.sm['longitudinalPlan'].xState
-    hudControl.softHold = True if xState == "SOFT_HOLD" and CC.longEnabled else False
+    hudControl.softHold = True if xState == XState.softHold and CC.longEnabled else False
 
 
     actuators = CC.actuators
@@ -774,7 +775,7 @@ class Controls:
     else:
       hudControl.setSpeed = float(max(1, min(self.pcmLongSpeed, self.cruise_helper.v_cruise_kph_apply) * CV.KPH_TO_MS)) #float(self.v_cruise_helper.v_cruise_cluster_kph * CV.KPH_TO_MS)
 
-    #hudControl.softHold = True if self.sm['longitudinalPlan'].xState == "SOFT_HOLD" and self.cruise_helper.longActiveUser>0 else False
+    #hudControl.softHold = True if self.sm['longitudinalPlan'].xState == XState.softHold and self.cruise_helper.longActiveUser>0 else False
     hudControl.radarAlarm = True if self.cruise_helper.radarAlarmCount > 1000 else False
     hudControl.speedVisible = self.enabled
     hudControl.lanesVisible = self.enabled
@@ -890,6 +891,11 @@ class Controls:
     controlsState.uiAccelCmd = float(self.LoC.pid.i)
     controlsState.ufAccelCmd = float(self.LoC.pid.f)
     controlsState.cumLagMs = -self.rk.remaining * 1000.
+
+    #print("cumLagMsg={:5.2f}".format(-self.rk.remaining * 1000.))
+    self.debugText = 'cumLagMs={:5.1f}'.format(-self.rk.remaining * 1000.)
+    controlsState.debugText1 = self.debugText1
+
     controlsState.startMonoTime = int(start_time * 1e9)
     controlsState.forceDecel = bool(force_decel)
     controlsState.canErrorCounter = self.can_rcv_timeout_counter

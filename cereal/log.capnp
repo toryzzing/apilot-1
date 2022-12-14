@@ -931,16 +931,21 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   debugLongText1 @36 : Text;
   debugLongText2 @37 : Text;
   trafficState @38 : Int32;
-  xState @39 : Text;
+  xState @39 : XState;
   xCruiseTarget @40 : Float32;
   visionTurnControllerState @41 :VisionTurnControllerState;
   visionTurnSpeed @42 :Float32;
   xStop @43 : Float32;
-  leadX @44 : Float32;
-  leadV @45 : Float32;
-  tFollow @46 : Float32;
-  cruiseGap @47 : Int32;
+  tFollow @44 : Float32;
+  cruiseGap @45 : Int32;
 
+  enum XState {
+    lead @0;
+    cruise @1;
+    e2eCruise @2;
+    e2eStop @3;
+    softHold @4;
+  }
   enum LongitudinalPlanSource {
     cruise @0;
     lead0 @1;

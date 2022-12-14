@@ -84,8 +84,6 @@ def manager_init() -> None:
     ("MySafeModeFactor", "80"),      
     ("PrevCruiseGap", "3"),      
     ("AutoSyncCruiseSpeed", "1"),       
-    ("LongitudinalActuatorDelayUpperBound", "100"),       
-    ("LongitudinalActuatorDelayLowerBound", "100"),       
     ("StopDistance", "600"), 
     ("CustomMapbox", "0"),    
     ("E2eDecelSpeed", "90"),        
