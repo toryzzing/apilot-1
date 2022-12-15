@@ -893,7 +893,7 @@ class Controls:
     controlsState.cumLagMs = -self.rk.remaining * 1000.
 
     #print("cumLagMsg={:5.2f}".format(-self.rk.remaining * 1000.))
-    self.debugText = 'cumLagMs={:5.1f}'.format(-self.rk.remaining * 1000.)
+    self.debugText1 = 'cumLagMs={:5.1f}'.format(-self.rk.remaining * 1000.)
     controlsState.debugText1 = self.debugText1
 
     controlsState.startMonoTime = int(start_time * 1e9)
