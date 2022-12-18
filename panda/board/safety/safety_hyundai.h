@@ -292,7 +292,7 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
 
     if ((CR_VSM_DecCmd != 0) || (FCA_CmdAct != 0) || (CF_VSM_DecCmdAct != 0)) {
       tx = 0;
-      print("violation[FCA11, 909]\n");
+      puts("violation[FCA11, 909]\n");
     }
   }
 
@@ -318,7 +318,7 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
     violation |= (aeb_req != 0);
 
     if (violation) {
-        print("violation[1057]\n");
+        puts("violation[1057]\n");
       tx = 0;
     }
   }
@@ -331,7 +331,7 @@ static int hyundai_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
     if (steer_torque_cmd_checks(desired_torque, steer_req, HYUNDAI_STEERING_LIMITS)) {
       tx = 0;
       LKAS11_forwarding = false;// true;
-      print("violation[LKAS11, 832]\n");
+      puts("violation[LKAS11, 832]\n");
     }
     else LKAS11_forwarding = false;
   }
