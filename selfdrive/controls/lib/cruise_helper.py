@@ -101,6 +101,7 @@ class CruiseHelper:
     self.autoResumeFromGasSpeedMode = int(Params().get("AutoResumeFromGasSpeedMode"))
     self.myDrivingMode = int(Params().get("InitMyDrivingMode"))
     self.mySafeModeFactor = float(int(Params().get("MySafeModeFactor", encoding="utf8"))) / 100. if self.myDrivingMode == 2 else 1.0
+    self.liveSteerRatioApply  = float(int(Params().get("LiveSteerRatioApply", encoding="utf8"))) / 100.
 
   def update_params(self, frame):
     if frame % 20 == 0:
@@ -143,6 +144,7 @@ class CruiseHelper:
       elif self.update_params_count == 11:
         #self.myDrivingMode = int(Params().get("InitMyDrivingMode")) #초기에 한번만 읽어옴...
         self.mySafeModeFactor = float(int(Params().get("MySafeModeFactor", encoding="utf8"))) / 100. if self.myDrivingMode == 2 else 1.0
+        self.liveSteerRatioApply  = float(int(Params().get("LiveSteerRatioApply", encoding="utf8"))) / 100.
 
   @staticmethod
   def get_lead(sm):
