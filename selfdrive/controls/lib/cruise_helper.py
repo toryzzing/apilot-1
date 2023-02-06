@@ -57,7 +57,7 @@ class CruiseHelper:
     self.position_x = 1000.0
     self.position_y = 300.0
     self.cruiseButtons = 0
-    self.userCruisePaused = True
+    self.userCruisePaused = False
     self.radarAlarmCount = 0
     self.naviSpeedLimitTarget = 30
     self.dRel = 0
