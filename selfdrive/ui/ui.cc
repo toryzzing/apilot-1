@@ -58,10 +58,11 @@ void update_leads(UIState *s, const cereal::RadarState::Reader &radar_state, con
 }
 
 void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
-                      float y_off, float z_off_left, float z_off_right, line_vertices_data *pvd, int max_idx, bool allow_invert=true) { 
+                      float y_off, float z_off_left, float z_off_right, QPolygonF *pvd, int max_idx, bool allow_invert=true) { 
   const auto line_x = line.getX(), line_y = line.getY(), line_z = line.getZ();
-
-  std::vector<QPointF> left_points, right_points;
+  QPolygonF left_points, right_points;
+  left_points.reserve(max_idx + 1);
+  right_points.reserve(max_idx + 1);
 
   for (int i = 0; i <= max_idx; i++) {
     // highly negative x positions  are drawn above the frame and cause flickering, clip to zy plane of camera
@@ -75,18 +76,10 @@ void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Rea
         continue;
       }
       left_points.push_back(left);
-      right_points.push_back(right);
+      right_points.push_front(right);
     }
   }
-  pvd->cnt = 2 * left_points.size();
-  assert(left_points.size() == right_points.size());
-  assert(pvd->cnt <= std::size(pvd->v));
-
-  for (int left_idx = 0; left_idx < left_points.size(); left_idx++){
-    int right_idx = 2 * left_points.size() - left_idx - 1;
-    pvd->v[left_idx] = left_points[left_idx];
-    pvd->v[right_idx] = right_points[left_idx];
-  }
+  *pvd = left_points + right_points;
 }
 
 void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
@@ -101,7 +94,7 @@ void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   int max_idx = get_path_length_idx(lane_lines[0], max_distance);
   for (int i = 0; i < std::size(scene.lane_line_vertices); i++) {
     scene.lane_line_probs[i] = lane_line_probs[i];
-    update_line_data(s, lane_lines[i], 0.025 * scene.lane_line_probs[i], 0, 0, &scene.lane_line_vertices[i], max_idx);
+    update_line_data(s, lane_lines[i], 0.02 * scene.lane_line_probs[i] * 3.5, 0, 0, &scene.lane_line_vertices[i], max_idx);
   }
   
   // lane barriers for blind spot
@@ -115,17 +108,18 @@ void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   const auto road_edge_stds = model.getRoadEdgeStds();
   for (int i = 0; i < std::size(scene.road_edge_vertices); i++) {
     scene.road_edge_stds[i] = road_edge_stds[i];
-    update_line_data(s, road_edges[i], 0.025, 0, 0, &scene.road_edge_vertices[i], max_idx);
+    update_line_data(s, road_edges[i], 0.025 * 3.5, 0, 0, &scene.road_edge_vertices[i], max_idx);
   }
 
   // update path
   auto lead_one = (*s->sm)["radarState"].getRadarState().getLeadOne();
+  auto lp = (*s->sm)["lateralPlan"].getLateralPlan();
   if (lead_one.getStatus()) {
     const float lead_d = lead_one.getDRel() * 2.;
     max_distance = std::clamp((float)(lead_d - fmin(lead_d * 0.35, 10.)), 0.0f, max_distance);
   }
   max_idx = get_path_length_idx(model_position, max_distance);
-  update_line_data(s, model_position, 0.9, 1.22, 1.22, &scene.track_vertices, max_idx, false);
+  update_line_data(s, model_position, (lp.getUseLaneLines()) ? 0.3 : 0.9, 1.22, 1.22, &scene.track_vertices, max_idx, false);
 }
 
 static void update_sockets(UIState *s) {

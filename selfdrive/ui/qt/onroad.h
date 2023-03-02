@@ -53,8 +53,10 @@ protected:
   void showEvent(QShowEvent *event) override;
   void updateFrameMat(int w, int h) override;
   void drawLaneLines(QPainter& painter, const UIState* s);
-  void drawLead(QPainter &painter, const cereal::ModelDataV2::LeadDataV3::Reader &lead_data, const QPointF &vd, bool is_radar);
+  void drawLead(QPainter &painter, const cereal::ModelDataV2::LeadDataV3::Reader &lead_data, const QPointF &vd, bool is_radar, bool no_radar=false);
   inline QColor redColor(int alpha = 255) { return QColor(201, 34, 49, alpha); }
+  inline QColor greenColor(int alpha = 255) { return QColor(30, 200, 5, alpha); }
+  inline QColor yellowColor(int alpha = 255) { return QColor(255, 255, 0, alpha); }
   inline QColor whiteColor(int alpha = 255) { return QColor(255, 255, 255, alpha); }
   inline QColor blackColor(int alpha = 255) { return QColor(0, 0, 0, alpha); }
 
@@ -89,14 +91,19 @@ protected:
   QPixmap ic_trafficLight_red;
   QPixmap ic_trafficLight_x;
   QPixmap ic_trafficLight_none;
+  QPixmap ic_stopman;
   QPixmap ic_navi;
   QPixmap ic_scc2;
   QPixmap ic_radartracks;
+  QPixmap ic_radar;
+  QPixmap ic_radar_vision;
+  QPixmap ic_radar_no;
 
   QMap<QString, QPixmap> ic_oil_com;
 
   void drawMaxSpeed(QPainter &p);
   void drawSpeed(QPainter &p);
+  void drawApilot(QPainter& p);
   void drawBottomIcons(QPainter &p);
   void drawSteer(QPainter &p);
   void drawDeviceState(QPainter &p);
