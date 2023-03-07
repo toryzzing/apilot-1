@@ -50,8 +50,13 @@ class CarInterface(CarInterfaceBase):
     ret.steerRatio = 16.
     tire_stiffness_factor = 1.
     CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
-
-    if candidate in (CAR.SANTA_FE, CAR.SANTA_FE_2022, CAR.SANTA_FE_HEV_2022, CAR.SANTA_FE_PHEV_2022):
+    if candidate in (CAR.GRANDEUR_IG_FL, CAR.GRANDEUR_IG_FL_HEV):
+      ret.mass = 1675. + STD_CARGO_KG
+      ret.wheelbase = 2.885
+      ret.steerRatio = 16.5  
+      tire_stiffness_factor = 0.8
+      ret.steerActuatorDelay = 0.2
+    elif candidate in (CAR.SANTA_FE, CAR.SANTA_FE_2022, CAR.SANTA_FE_HEV_2022, CAR.SANTA_FE_PHEV_2022):
       ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
       ret.wheelbase = 2.766
       # Values from optimizer
@@ -197,6 +202,10 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1767. + STD_CARGO_KG  # SX Prestige trim support only
       ret.wheelbase = 2.756
       ret.steerRatio = 13.6
+    elif candidate == CAR.KIA_SOUL_EV_SK3:
+      ret.steerRatio = 13.7  # average of the platforms
+      ret.mass = 1375. + STD_CARGO_KG
+      ret.wheelbase = 2.6      
 
     # Genesis
     elif candidate == CAR.GENESIS_G70:
@@ -225,12 +234,6 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1570. + STD_CARGO_KG
       ret.wheelbase = 2.845
       ret.steerRatio = 16.
-      tire_stiffness_factor = 0.8
-      ret.centerToFront = ret.wheelbase * 0.385
-    elif candidate in [CAR.GRANDEUR_IG_FL, CAR.GRANDEUR_IG_FL_HEV]:
-      ret.mass = 1600. + STD_CARGO_KG
-      ret.wheelbase = 2.885
-      ret.steerRatio = 17.
       tire_stiffness_factor = 0.8
       ret.centerToFront = ret.wheelbase * 0.385
     elif candidate == CAR.NEXO: # fix PolorBear - 22.06.05
@@ -306,7 +309,7 @@ class CarInterface(CarInterfaceBase):
     ret.stoppingControl = True
     ret.startingState = False # True # startAccel을 적용하는 startingState를 막음.
     ret.vEgoStarting = 0.3
-    ret.vEgoStopping = 0.3
+    ret.vEgoStopping = 0.7 #0.3
     ret.startAccel = 2.0
     ret.stoppingDecelRate = 0.4 # brake_travel/s while trying to stop
     ret.longitudinalActuatorDelayLowerBound = 0.5

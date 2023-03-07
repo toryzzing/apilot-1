@@ -47,6 +47,7 @@ def manager_init() -> None:
     ("ShowDebugUI", "1"),
     ("OPKRServer", "0"),
     ("ShowDateTime", "1"),
+    ("ShowHudMode", "1"),
     ("AutoResumeFromGas", "1"),
     ("AutoResumeFromGasSpeed", "30"),
     ("AutoResumeFromGasSpeedMode", "0"),    
@@ -116,7 +117,16 @@ def manager_init() -> None:
     ("PathOffset", "0"),   
     ("HapticFeedbackWhenSpeedCamera", "0"),       
     ("SoftHoldMode", "1"),       
-    ("ApplyModelDistOrder", "32"),       
+    ("ApplyModelDistOrder", "32"),        
+    ("SteeringRateCost", "800"),       
+    ("LateralAccelCost", "100"),       
+    ("LateralTestMode", "0"),       
+    ("SteerActuatorDelay", "30"), 
+    ("SteerActuatorDelay", "30"),       
+    ("SteerActuatorDelayLow", "30"),       
+    ("SteerActuatorDelayMid", "30"),         
+    ("SteerDeltaUp", "3"),       
+    ("SteerDeltaDown", "7"),        
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

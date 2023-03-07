@@ -36,9 +36,119 @@
       "name": "LiveSteerRatioApply",
       "title": "LiveSteerRatioApply(100%)",
       "descr": "",
-      "min": 50,
-      "max": 110,
+      "min": 1,
+      "max": 200,
       "default": 100,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "SteeringRateCost",
+      "title": "SteeringRateCost(800)",
+      "descr": "",
+      "min": 0,
+      "max": 1000,
+      "default": 800,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "LateralAccelCost",
+      "title": "_LateralAccelCost(100)",
+      "descr": "",
+      "min": 0,
+      "max": 1000,
+      "default": 100,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "LateralMotionCost",
+      "title": "_LateralMotionCost(11)",
+      "descr": "",
+      "min": 0,
+      "max": 1000,
+      "default": 11,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "PathCostApply",
+      "title": "_PathCostApply(100)",
+      "descr": "½ÃÇè¿ë",
+      "min": 0,
+      "max": 500,
+      "default": 100,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "LateralJerkCost",
+      "title": "_LateralJerkCost(4)",
+      "descr": "",
+      "min": 0,
+      "max": 100,
+      "default": 5,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "LateralTestMode",
+      "title": "_LateralTestMode(0)",
+      "descr": "",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "SteerActuatorDelay",
+      "title": "SteerActuatorDelay(30)",
+      "descr": "°ªÀÌÅ©¸é Á¶ÇâÀ» Á»´õ ¹Ì¸®ÇÔ(ÀÏ¹Ý,10msec)",
+      "min": 0,
+      "max": 100,
+      "default": 30,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "SteerActuatorDelayLow",
+      "title": "SteerActuatorDelayLow(30)",
+      "descr": "0Å°·ÎÀÏ¶§ SAD",
+      "min": 0,
+      "max": 200,
+      "default": 30,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "SteerActuatorDelayMid",
+      "title": "SteerActuatorDelayMid(30)",
+      "descr": "50Å°·Î¼Óµµ SAD",
+      "min": 0,
+      "max": 200,
+      "default": 30,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "SteerDeltaUp",
+      "title": "SteerDeltaUp(3)",
+      "descr": "",
+      "min": 1,
+      "max": 20,
+      "default": 3,
+      "unit": 1
+    },
+    {
+      "group": "Á¶ÇâÆ©´×",
+      "name": "SteerDeltaDown",
+      "title": "SteerDeltaDown(7)",
+      "descr": "",
+      "min": 1,
+      "max": 20,
+      "default": 7,
       "unit": 1
     },
     {
@@ -337,7 +447,17 @@
       "title": "½Ã°£Á¤º¸Ç¥½Ã",
       "descr": "",
       "min": 0,
-      "max": 1,
+      "max": 3,
+      "default": 1,
+      "unit": 1
+    },
+    {
+      "group": "È­¸é",
+      "name": "ShowHudMode",
+      "title": "È­¸éÇ¥½Ã¸ðµå",
+      "descr": "",
+      "min": 0,
+      "max": 3,
       "default": 1,
       "unit": 1
     },

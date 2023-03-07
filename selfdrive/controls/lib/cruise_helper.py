@@ -107,6 +107,9 @@ class CruiseHelper:
     self.mySafeModeFactor = float(int(Params().get("MySafeModeFactor", encoding="utf8"))) / 100. if self.myDrivingMode == 2 else 1.0
     self.liveSteerRatioApply  = float(int(Params().get("LiveSteerRatioApply", encoding="utf8"))) / 100.
     self.autoCancelFromGas = int(Params().get("AutoCancelFromGas"))
+    self.steerActuatorDelay = float(int(Params().get("SteerActuatorDelay", encoding="utf8"))) / 100.
+    self.steerActuatorDelayLow = float(int(Params().get("SteerActuatorDelayLow", encoding="utf8"))) / 100.
+    self.steerActuatorDelayMid = float(int(Params().get("SteerActuatorDelayMid", encoding="utf8"))) / 100.
 
   def update_params(self, frame):
     if frame % 20 == 0:
@@ -153,11 +156,20 @@ class CruiseHelper:
       elif self.update_params_count == 12:
         self.autoCancelFromGas = int(Params().get("AutoCancelFromGas"))
         self.gapButtonMode = int(Params().get("GapButtonMode"))
+      elif self.update_params_count == 13:
+        self.steerActuatorDelay = float(int(Params().get("SteerActuatorDelay", encoding="utf8"))) / 100.
+        self.steerActuatorDelayLow = float(int(Params().get("SteerActuatorDelayLow", encoding="utf8"))) / 100.
+        self.steerActuatorDelayMid = float(int(Params().get("SteerActuatorDelayMid", encoding="utf8"))) / 100.
       elif self.update_params_count == 14:
         self.cruiseSpeedMin = int(Params().get("CruiseSpeedMin"))
       elif self.update_params_count == 15:
         self.autoNaviSpeedCtrlStart = float(Params().get("AutoNaviSpeedCtrlStart"))
         self.autoNaviSpeedCtrlEnd = float(Params().get("AutoNaviSpeedCtrlEnd"))
+
+  def getSteerActuatorDelay(self, v_ego):
+    v_ego_kph = v_ego * 3.6
+
+    return interp(v_ego_kph, [0, 50, 200], [self.steerActuatorDelayLow, self.steerActuatorDelayMid, self.steerActuatorDelay])
 
   @staticmethod
   def get_lead(sm):
@@ -477,6 +489,8 @@ class CruiseHelper:
       elif CS.gasPressed:
         if self.autoCancelFromGas > 0 and v_ego_kph < self.autoCancelFromGas and dRel == 0: # 일정속도 이하에서 가속페달을 밟으면 크루즈해제함. 이상한 주차장, 복잡한 도로에서 사용..
           self.cruise_control(controls, CS, -2)
+        elif v_ego_kph < v_cruise_kph and abs(CS.steeringAngleDeg) > 7.0 and 0 < dRel < 30: #주행속도보다 느린데 가속페달을 밟고 핸들이 살짝 틀어져 있으면...앞에 차가 30M이내에 있을때... 현재속도로 세트..
+            v_cruise_kph = v_ego_kph_set
         elif v_ego_kph > v_cruise_kph and self.autoSyncCruiseSpeedMax > self.autoResumeFromGasSpeed:
           if self.autoResumeFromGasSpeed < v_ego_kph < self.autoSyncCruiseSpeedMax: # 오토크루즈 ON속도보다 높고, 130키로보다 작을때만 싱크
             v_cruise_kph = v_ego_kph_set

@@ -228,6 +228,9 @@ struct CarState {
   vCluRatio @47 :Float32;
   driverOverride @49 : Int32; #0: Normal, 1:Gas, 2:Brake
   naviSafetyInfo @50 : NaviSafetyInfo;
+  engineRpm @51 : Float32;
+  chargeMeter @52 : Float32;
+  motorRpm @53 : Float32;
 
   struct NaviSafetyInfo {
     sign @0 : Int32; # OPKR_S_Sign
@@ -376,7 +379,9 @@ struct CarControl {
     speed @6: Float32; # m/s
     accel @4: Float32; # m/s^2
     longControlState @5: LongControlState;
-
+    
+    curvature @7: Float32;
+    
     enum LongControlState @0xe40f3a917d908282{
       off @0;
       pid @1;
