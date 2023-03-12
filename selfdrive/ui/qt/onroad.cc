@@ -526,7 +526,7 @@ void AnnotatedCameraWidget::paintEvent(QPaintEvent *event) {
 
 
     // DMoji
-    if (!hideDM && (sm.rcv_frame("driverState") > s->scene.started_frame)) {
+    if (s->show_mode > 0 && !hideDM && (sm.rcv_frame("driverState") > s->scene.started_frame)) {
       update_dmonitoring(s, sm["driverState"].getDriverState(), dm_fade_state);
       drawDriverState(p, s);
     }
