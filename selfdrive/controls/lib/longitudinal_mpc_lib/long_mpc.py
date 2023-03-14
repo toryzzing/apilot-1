@@ -246,7 +246,7 @@ class LongitudinalMpc:
     self.v_cruise = 0.
     self.xStopFilter = StreamingMovingAverage(3)  #11
     self.xStopFilter2 = StreamingMovingAverage(15) #3
-    self.vFilter = StreamingMovingAverage(7)
+    self.vFilter = StreamingMovingAverage(3)
     self.buttonStopDist = 0
     self.applyCruiseGap = 1.
     self.applyModelDistOrder = 32
